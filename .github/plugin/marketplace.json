@@ -1,0 +1,15 @@
+{
+  "name": "dynamic-workflow-samples",
+  "owner": {
+    "name": "mjrousos",
+    "url": "https://github.com/mjrousos"
+  },
+  "plugins": [
+    {
+      "name": "workflow-demo",
+      "description": "A three-phase dynamic workflow with progress logs and one greeting subagent.",
+      "version": "1.0.0",
+      "source": "./plugins/workflow-demo"
+    }
+  ]
+}
