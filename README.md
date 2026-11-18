@@ -199,7 +199,7 @@ Tests execute the real workflow body with a fake context and stubbed agent, cove
 | --- | --- |
 | Syntax and model-free tests | Passed: eight tests using Node.js 26.13.0. |
 | Local plugin discovery and real CLI run | Passed with CLI 1.0.114-0: extension loaded, three phases reported, one subagent completed with zero tool calls, JSON result returned. |
-| GitHub marketplace installation | Manual verification. |
+| GitHub marketplace installation (CLI) | Passed with CLI 1.0.114-0: `marketplace add`, `browse`, and `install workflow-demo@dynamic-workflow-samples` succeeded in a fresh `COPILOT_HOME`; `workflow run workflow-demo` completed all three phases and returned a result. |
 | App installation and local run | Documented manual verification; not executed here. |
 | Cloud-agent plugin configuration/execution | Documented configuration and verification procedure; execution support remains unverified. |
 
