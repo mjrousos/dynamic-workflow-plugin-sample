@@ -1,4 +1,4 @@
-import { defineWorkflow, joinSession } from "@microsoft/copilot-sdk/extension";
+import { defineWorkflow, joinSession } from "@github/copilot-sdk/extension";
 import { workflowDefinition } from "./workflow.mjs";
 
 await joinSession({

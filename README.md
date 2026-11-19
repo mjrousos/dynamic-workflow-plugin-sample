@@ -15,13 +15,15 @@ plugins\workflow-demo\extensions\workflow-demo\
 tests\workflow.test.mjs                               Model-free tests
 ```
 
-The marketplace points to the plugin. The plugin's `extensions` field points to a directory of extensions. Copilot loads `extension.mjs`, which uses the host-provided `@microsoft/copilot-sdk/extension` API:
+The marketplace points to the plugin. The plugin's `extensions` field points to a directory of extensions. Copilot loads `extension.mjs`, which uses the host-provided `@github/copilot-sdk/extension` API:
 
 ```js
 await joinSession({
     workflows: [defineWorkflow(workflowDefinition)],
 });
 ```
+
+**Why `@github/copilot-sdk`?** Newer CLI builds also provide the SDK as `@microsoft/copilot-sdk`, but some Copilot app builds only provide `@github/copilot-sdk`. Importing from `@github/copilot-sdk/extension` works in both.
 
 `workflow.mjs` declares the phases and implements the workflow body:
 
