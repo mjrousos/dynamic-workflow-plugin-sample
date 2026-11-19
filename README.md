@@ -44,7 +44,7 @@ Agent Plugins 1.0's `extensions` manifest field is for namespaced client-specifi
 - A current Copilot CLI, or the GitHub Copilot app for the app walkthrough.
 - A signed-in account eligible to run dynamic workflows. See the [availability and billing requirements][workflows-concept]; an installed plugin alone does not establish eligibility.
 - Experimental features enabled in CLI (`copilot --experimental` or `/settings experimental on`), with extensions not disabled.
-- Remote installation and the app/cloud walkthroughs use the public repository [`mjrousos/dynamic-workflow-plugin-sample`][repo]. If you fork it, replace `mjrousos/dynamic-workflow-plugin-sample` in the commands below with your fork.
+- Remote installation and the app walkthrough use the public repository [`mjrousos/dynamic-workflow-plugin-sample`][repo]. If you fork it, replace `mjrousos/dynamic-workflow-plugin-sample` in the commands below with your fork.
 
 Dynamic workflows and extensions are preview/experimental features, so client support and commands can change.
 
@@ -147,43 +147,7 @@ These steps use the GitHub-hosted marketplace, not the CLI-only local mount.
 3. Start a new **local session** in a repository or folder. Ask what dynamic workflows are available, then explicitly ask: `Run the workflow-demo dynamic workflow.`
 4. Open the **Workflows** button above the prompt box while the run is active, or after it completes. Select the run to inspect its phases, progress messages, subagent, and usage. Check for completion and the greeting result.
 
-The documented app workflow-monitoring UI is **local-session-only**. Do not assume it applies to app sessions delegated to the cloud. No canvas is required for this sample.
-
-## Configure and verify in a repository using Copilot cloud agent
-
-To configure the plugin using the [documented cloud-agent mechanism][cloud-settings]:
-
-1. In the **consuming repository**, add the following to `.github\copilot\settings.json`, merging with existing settings rather than overwriting them. (If you use a fork, point `repo` at it.)
-2. Commit the settings and make them available on the branch used for a new cloud-agent task.
-
-```json
-{
-  "extraKnownMarketplaces": {
-    "dynamic-workflow-samples": {
-      "source": {
-        "source": "github",
-        "repo": "mjrousos/dynamic-workflow-plugin-sample"
-      }
-    }
-  },
-  "enabledPlugins": {
-    "workflow-demo@dynamic-workflow-samples": true
-  }
-}
-```
-
-Cloud agent uses these repository settings without a local override. Organizational policy and repository access still apply. This sample repository does not enable the plugin for itself; add the settings to the repository where you want cloud agent to use it.
-
-Start a new cloud-agent task in the consuming repository with this verification prompt:
-
-```text
-Verify the workflow-demo plugin configured in this repository.
-Report whether its extension loaded and whether the workflow-demo dynamic
-workflow is registered. Run the workflow once and report its run ID, terminal status,
-reported phases, and greeting result.
-```
-
-Inspect the cloud-agent session output/logs for the actual result. 
+The documented app workflow-monitoring UI is **local-session-only**. No canvas is required for this sample.
 
 ## Model-free checks
 
@@ -203,7 +167,6 @@ Tests execute the real workflow body with a fake context and stubbed agent, cove
 | Local plugin discovery and real CLI run | Passed with CLI 1.0.115-0: the Agent Plugins 1.0 extension loaded, reported three phases, and returned a greeting result. |
 | Marketplace installation (CLI) | The Agent Plugins 1.0 plugin was installed and run from a local marketplace with CLI 1.0.115-0. The earlier legacy-format plugin was installed and run from the GitHub marketplace with CLI 1.0.114-0. |
 | App installation and local run | Documented manual verification; not executed here. |
-| Cloud-agent plugin configuration/execution | Documented configuration and verification procedure; execution support remains unverified. |
 
 ## Troubleshooting
 
@@ -214,7 +177,7 @@ Tests execute the real workflow body with a fake context and stubbed agent, cove
 | Edits do not appear | Reinstall a cached local plugin and start a new session, or use `--plugin-dir` for development. Run `copilot plugin update workflow-demo` to pick up pushed changes in a remotely installed plugin. |
 | Run cannot start | Check dynamic-workflow eligibility, authentication, and managed policy. A successfully installed plugin does not override them. |
 | No usable greeting | The run deliberately fails for an empty/failed subagent response. Inspect the run's error and model-service availability; do not treat it as completed. |
-| No app Workflows button | First invoke the workflow in a local session; the documented monitoring UI is not available for cloud sessions. |
+| No app Workflows button | First invoke the workflow in a local session; the documented monitoring UI is only available for local sessions. |
 
 ## References
 
@@ -224,7 +187,6 @@ Tests execute the real workflow body with a fake context and stubbed agent, cove
 - [Plugin manifest and extension path reference][plugin-reference]
 - [Creating and sharing a marketplace][marketplaces]
 - [Customizing the Copilot app][app-customization]
-- [Configuring plugins for Copilot cloud agent][cloud-settings]
 
 [repo]: https://github.com/mjrousos/dynamic-workflow-plugin-sample
 [workflows-concept]: https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/dynamic-workflows
@@ -233,4 +195,3 @@ Tests execute the real workflow body with a fake context and stubbed agent, cove
 [plugin-reference]: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference
 [marketplaces]: https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/create-and-share-plugin-marketplaces
 [app-customization]: https://docs.github.com/en/copilot/how-tos/github-copilot-app/customize-github-copilot-app
-[cloud-settings]: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings
