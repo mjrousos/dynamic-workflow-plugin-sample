@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { workflowDefinition } from "../plugins/workflow-demo/extensions/workflow-demo/workflow.mjs";
+import { workflowDefinition } from "../plugins/workflow-demo/com.github.copilot/extensions/workflow-demo/workflow.mjs";
 
 function createContext(agent) {
     const controller = new AbortController();
@@ -109,8 +109,9 @@ test("the marketplace and plugin resolve to an extension entrypoint", async () =
     const pluginRoot = new URL(`${entry.source}/`, root);
     const manifest = JSON.parse(await readFile(new URL("plugin.json", pluginRoot), "utf8"));
 
+    assert.equal(manifest.$schema, "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json");
     assert.equal(manifest.name, entry.name);
     assert.equal(manifest.version, entry.version);
-    const extension = new URL(`${manifest.extensions[0]}/workflow-demo/extension.mjs`, pluginRoot);
+    const extension = new URL("com.github.copilot/extensions/workflow-demo/extension.mjs", pluginRoot);
     assert.match(await readFile(extension, "utf8"), /joinSession/);
 });

@@ -1,6 +1,6 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "workflow-demo",
   "description": "Demonstrates packaging an observable dynamic workflow in a Copilot plugin.",
-  "version": "1.0.1",
-  "extensions": ["extensions"]
+  "version": "1.0.2"
 }

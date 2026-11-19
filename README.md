@@ -9,13 +9,13 @@ The sample uses Copilot's native workflow tracking, not a custom UI. It is not a
 ```text
 .github\plugin\marketplace.json                       Marketplace catalog
 plugins\workflow-demo\plugin.json                     Plugin manifest
-plugins\workflow-demo\extensions\workflow-demo\
+plugins\workflow-demo\com.github.copilot\extensions\workflow-demo\
     extension.mjs                                    SDK registration
     workflow.mjs                                     Workflow definition
 tests\workflow.test.mjs                               Model-free tests
 ```
 
-The marketplace points to the plugin. The plugin's `extensions` field points to a directory of extensions. Copilot loads `extension.mjs`, which uses the host-provided `@github/copilot-sdk/extension` API:
+The marketplace points to the plugin. Its `plugin.json` declares the Agent Plugins 1.0 schema; the executable extension is under the Copilot-specific `com.github.copilot` directory. Copilot loads `extension.mjs`, which uses the host-provided `@github/copilot-sdk/extension` API:
 
 ```js
 await joinSession({
@@ -37,7 +37,7 @@ await joinSession({
 
 The subagent inherits the host's model choice. It is asked not to use tools, inspect files, or delegate. The sample itself performs no file writes or external API calls; the model request uses normal Copilot usage/AI credits, and Copilot records its usual session history. No custom credentials are required.
 
-**Why a legacy manifest?** This sample deliberately omits the Agent Plugins `$schema`: the legacy Copilot format documents an `extensions` path field for executable extensions. Agent Plugins 1.0 uses the same field name for a different, namespaced metadata map. Do not add that schema while retaining this path field.
+Agent Plugins 1.0's `extensions` manifest field is for namespaced client-specific data, not extension paths. The executable extension lives at `com.github.copilot\extensions\workflow-demo\extension.mjs`. This Copilot-specific location was verified in the CLI but is not listed in the plugin reference; it is not a portable Agent Plugins component.
 
 ## Prerequisites
 
@@ -190,8 +190,8 @@ Inspect the cloud-agent session output/logs for the actual result.
 From the repository root:
 
 ```powershell
-node --check .\plugins\workflow-demo\extensions\workflow-demo\extension.mjs
-node --check .\plugins\workflow-demo\extensions\workflow-demo\workflow.mjs
+node --check .\plugins\workflow-demo\com.github.copilot\extensions\workflow-demo\extension.mjs
+node --check .\plugins\workflow-demo\com.github.copilot\extensions\workflow-demo\workflow.mjs
 node --test .\tests\workflow.test.mjs
 ```
 
@@ -200,8 +200,8 @@ Tests execute the real workflow body with a fake context and stubbed agent, cove
 | Check | Validation status |
 | --- | --- |
 | Syntax and model-free tests | Passed: eight tests using Node.js 26.13.0. |
-| Local plugin discovery and real CLI run | Passed with CLI 1.0.114-0: extension loaded, three phases reported, one subagent completed with zero tool calls, JSON result returned. |
-| GitHub marketplace installation (CLI) | Passed with CLI 1.0.114-0: `marketplace add`, `browse`, and `install workflow-demo@dynamic-workflow-samples` succeeded in a fresh `COPILOT_HOME`; `workflow run workflow-demo` completed all three phases and returned a result. |
+| Local plugin discovery and real CLI run | Passed with CLI 1.0.115-0: the Agent Plugins 1.0 extension loaded, reported three phases, and returned a greeting result. |
+| Marketplace installation (CLI) | The Agent Plugins 1.0 plugin was installed and run from a local marketplace with CLI 1.0.115-0. The earlier legacy-format plugin was installed and run from the GitHub marketplace with CLI 1.0.114-0. |
 | App installation and local run | Documented manual verification; not executed here. |
 | Cloud-agent plugin configuration/execution | Documented configuration and verification procedure; execution support remains unverified. |
 
@@ -210,7 +210,7 @@ Tests execute the real workflow body with a fake context and stubbed agent, cove
 | Symptom | Check |
 | --- | --- |
 | Workflow not found | Confirm the plugin is enabled with `copilot plugin list`; use a new session after installing. In CLI, enable experimental features and use `/extensions` to check extension status and `/extensions mode` if loading is disabled. |
-| Extension fails to load | Inspect the extension diagnostics/log path from `/extensions`. Keep the manifest's `extensions` field and directory layout intact. The SDK import resolves inside Copilot, not with `node extension.mjs` alone. |
+| Extension fails to load | Inspect the extension diagnostics/log path from `/extensions`. Keep the Agent Plugins 1.0 manifest and Copilot-specific directory layout intact. The SDK import resolves inside Copilot, not with `node extension.mjs` alone. |
 | Edits do not appear | Reinstall a cached local plugin and start a new session, or use `--plugin-dir` for development. Run `copilot plugin update workflow-demo` to pick up pushed changes in a remotely installed plugin. |
 | Run cannot start | Check dynamic-workflow eligibility, authentication, and managed policy. A successfully installed plugin does not override them. |
 | No usable greeting | The run deliberately fails for an empty/failed subagent response. Inspect the run's error and model-service availability; do not treat it as completed. |
